@@ -12,16 +12,18 @@
 #include <ArduinoJson.h>
 
 // Set the LCD address to 0x27 for a 16 chars and 2 line display
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(0x3F, 21, 4);
 
 //WIFI
 ESP8266WiFiMulti WiFiMulti;
 // Wifi settings
-const char* ssid = "VGV7519AFF4F3";
-const char* password =  "AbqE6zdrffdL";
+const char* ssid = "cubedwolf";
+const char* password =  "kaasblokje12";
+const int charsinline = 21;
+const int lines = 4;
 
 //const char* api_url = "http://192.168.2.12/Arduino/api_test";
-const char* api_url = "http://vanhoof.tech/test";
+const char* api_url = "http://api.vanhoof.tech/test";
 
 int timer = 0;
 String firstRow = "";
@@ -32,7 +34,6 @@ void setup()
 {
 
    Serial.begin(115200);
-   
    
    setupLCD();
    setupWifi();
@@ -52,7 +53,7 @@ void setupWifi(){
 void setupLCD(){
   // initialize the LCD
   Wire.begin(D2, D1);
-  lcd.begin();
+  lcd.begin(0x3F, charsinline, 4);
 
   // Turn on the blacklight and print a message.
   lcd.backlight();
@@ -108,8 +109,6 @@ void handleJson(String rawJson){
   const size_t capacity = 7*JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(7) + JSON_OBJECT_SIZE(1) + 380;
 
   DynamicJsonDocument doc(capacity);
-  
-  
   DeserializationError error = deserializeJson(doc, rawJson);
 
   if (error) {
@@ -146,16 +145,16 @@ void printTextRow2(String text){
 }
 
 void scroll(){
-  if(firstRow.length()>15){
+  if(firstRow.length()>charsinline-1){
     lcd.setCursor(0,0);
     firstRow = ScrollTxt(firstRow);
-    lcd.print(firstRow.substring(0,15));
+    lcd.print(firstRow.substring(0,charsinline-1));
   }
 
-  if(secondRow.length()>15){
+  if(secondRow.length()>charsinline-1){
     lcd.setCursor(0,0);
     secondRow = ScrollTxt(secondRow);
-    lcd.print(secondRow.substring(0,15));
+    lcd.print(secondRow.substring(0,charsinline-1));
   }
    
   
